@@ -39,9 +39,8 @@ Builder.load_string('''
 ''')
 
 
-def get_frame():
-
-    texture = self.cameraObject.texture
+def get_frame(cameraObject):
+    texture = cameraObject.texture
     size=texture.size
     pixels = texture.pixels
     pil_image=Image.frombytes(mode='RGBA', size=size,data=pixels)
