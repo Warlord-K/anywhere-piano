@@ -5,7 +5,7 @@ import numpy as np
 cap = cv2.VideoCapture(0)
 
 # Load the piano keys image
-piano_keys = cv2.imread('piano_keys.png', cv2.IMREAD_UNCHANGED)
+piano_keys = cv2.imread('anywhere-piano\piano_keys.png', cv2.IMREAD_UNCHANGED)
 
 while True:
     # Read a frame from the video capture

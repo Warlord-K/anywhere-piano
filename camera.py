@@ -17,8 +17,15 @@ throw an exception during the kv language processing.
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
+
 import cv2
+import numpy as np
 from PIL import Image
+
+from datetime import datetime
+
+from Detection.detection import Detector
+
 Builder.load_string('''
 <CameraClick>:
     orientation: 'horizontal'
@@ -27,7 +34,7 @@ Builder.load_string('''
         resolution: (1920, 1080)
         play: False
     ToggleButton:
-        text: 'Play'
+        text: 'Play/Stop'
         on_press: camera.play = not camera.play
         size_hint_y: None
         height: '48dp'
@@ -36,6 +43,12 @@ Builder.load_string('''
         size_hint_y: None
         height: '48dp'
         on_press: root.capture()
+    Button:
+        text: 'Run Detection'
+        size_hint_y: None
+        height: '48dp'
+        on_press: root.detector.runDetection()
+    
 ''')
 
 
@@ -43,24 +56,42 @@ def get_frame(cameraObject):
     texture = cameraObject.texture
     size=texture.size
     pixels = texture.pixels
+
+    #cv2 format 
+    mat = cv2.cv.CreateMatFromData(pixels.width, pixels.height, cv2.cv.CV_8UC4, pixels.data)
+    array = np.asarray(mat)
+
+    return array 
+
+    #pil format
     pil_image=Image.frombytes(mode='RGBA', size=size,data=pixels)
-    return pil_image
+    # return pil_image
 
 class CameraClick(BoxLayout):
+
+    detector = Detector()
+
     def capture(self):
         '''
         Function to capture the images and give them the names
         according to their captured time and date.
         '''
         camera = self.ids['camera']
-        camera.export_to_png("IMG_{}.png".format(timestr))
+        print(type(camera))
+        camera.export_to_png("/anywhere-piano/Images/IMG_{}.png".format(datetime.now().strftime("%Y-%m-%d_%H-%M-%S")))
         print("Captured")
+
+
 
 
 class TestCamera(App):
 
     def build(self):
         return CameraClick()
+    
+
+    
+
 
 
 TestCamera().run()
