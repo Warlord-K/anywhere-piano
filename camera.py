@@ -33,6 +33,8 @@ Builder.load_string('''
         id: camera
         resolution: (1920, 1080)
         play: False
+    
+
     ToggleButton:
         text: 'Play/Stop'
         on_press: camera.play = not camera.play
@@ -43,13 +45,18 @@ Builder.load_string('''
         size_hint_y: None
         height: '48dp'
         on_press: root.capture()
+
     Button:
+        id: detbut
         text: 'Run Detection'
         size_hint_y: None
         height: '48dp'
-        on_press: root.detector.runDetection()
+        on_press: root.startDetection()
+        
+    
     
 ''')
+
 
 
 def get_frame(cameraObject):
@@ -69,7 +76,22 @@ def get_frame(cameraObject):
 
 class CameraClick(BoxLayout):
 
-    detector = Detector()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.cam_detect = False
+        self.detector = Detector() #we are creating single detector object right ?(multiple give issue when trying to stop detectino,older ones stay in while loop)
+    
+    #need to implement stop functionality
+    def startDetection(self):
+        
+        # self.cam_detect = not self.cam_detect #toggles detection bool
+
+        self.detector.img =  self.ids['camera']
+        feed = self.ids['camera'].play
+        self.detector.detectbool = self.cam_detect
+
+        print(f"feed {feed}---detectbool {self.detector.detectbool}")
+        self.detector.runDetection(feed)
 
     def capture(self):
         '''
