@@ -3,7 +3,6 @@ from kivy.app import App
 from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
-from Utils.cvfpscalc import CvFpsCalc
 
 
 import time
