@@ -7,7 +7,17 @@ from kivy.graphics.texture import Texture
 
 import time
 
-import mediapipe
+import mediapipe as mp
+model_path = 'anywhere-piano\hand_landmarker.task'
+
+mp_hands = mp.solutions.hands
+
+# ro set the hands function which will hold the landmarks points
+hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
+
+# to set up the drawing function of hands landmarks on the image
+mp_drawing = mp.solutions.drawing_utils
+
 
 class MyApp(App):
     def build(self):
@@ -42,7 +52,21 @@ class MyApp(App):
 
 
                  # Process the frame
-                processed_frame = flipped_frame
+                
+                results = hands.process(cv2.cvtColor(flipped_frame, cv2.COLOR_BGR2RGB))
+
+                image_height, image_width, _ = flipped_frame.shape
+         
+                img_copy = flipped_frame
+
+                if results.multi_hand_landmarks:
+
+                    for hand_no, hand_landmarks in enumerate(results.multi_hand_landmarks):
+                        
+                        mp_drawing.draw_landmarks(image = img_copy, landmark_list = hand_landmarks,
+                                                connections = mp_hands.HAND_CONNECTIONS )
+        
+                processed_frame = img_copy
 
                 #put fps
                 
